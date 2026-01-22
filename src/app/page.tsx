@@ -19,13 +19,13 @@ export default function Home() {
           >
             Открыть уровень 1
           </Link>
-          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/2">
+          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/2/predmety">
             Уровень 2
           </Link>
-          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/3">
+          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/3/proekty-predmetov">
             Уровень 3
           </Link>
-          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/4">
+          <Link className="rounded-lg border border-black/10 px-3 py-2 text-sm" href="/level/4/dizayn-proekty-predmetov-byta">
             Уровень 4
           </Link>
         </div>

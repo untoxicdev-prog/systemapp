@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import type { DashedGroup, LevelNavModel, Pill, PillStyle } from "@/mocks/levelNavMock";
+import type { DashedGroup, LevelNavModel, Pill, PillStyle, RowModel } from "@/mocks/levelNavMock";
 
 const COLORS = {
   dark: "#1F1F46",
@@ -22,20 +22,26 @@ function pillClasses(style: PillStyle) {
         base,
         "bg-white text-[#1F1F46] border border-white/20 hover:bg-white/95",
       ].join(" ");
+    case "darkOutline":
+      return [
+        base,
+        "bg-transparent text-white border border-white/40 hover:bg-white/10",
+      ].join(" ");
     case "darkSelected":
       return [base, "bg-[#1F1F46] text-white border border-[#1F1F46]"].join(" ");
     case "white":
       return [base, "bg-white text-[#1F1F46] border border-black/15"].join(" ");
-    case "greenOutline":
-      return [
-        base,
-        "bg-transparent text-white border",
-      ].join(" ");
-    case "blueOutline":
-      return [base, "bg-transparent text-white border"].join(" ");
-    case "orangeOutline":
+    case "outlineGreen":
       return [base, "bg-white text-[#1F1F46] border-2"].join(" ");
-    case "orangeFill":
+    case "outlineBlue":
+      return [base, "bg-white text-[#1F1F46] border-2"].join(" ");
+    case "outlineOrange":
+      return [base, "bg-white text-[#1F1F46] border-2"].join(" ");
+    case "fillGreen":
+      return [base, "text-white border"].join(" ");
+    case "fillBlue":
+      return [base, "text-white border"].join(" ");
+    case "fillOrange":
       return [base, "bg-[#F95E25] text-white border border-[#F95E25]"].join(" ");
     default:
       return base;
@@ -44,12 +50,16 @@ function pillClasses(style: PillStyle) {
 
 function pillStyleInline(style: PillStyle): React.CSSProperties | undefined {
   switch (style) {
-    case "greenOutline":
+    case "outlineGreen":
       return { borderColor: COLORS.green };
-    case "blueOutline":
+    case "outlineBlue":
       return { borderColor: COLORS.blue };
-    case "orangeOutline":
+    case "outlineOrange":
       return { borderColor: COLORS.orange };
+    case "fillGreen":
+      return { background: COLORS.green, borderColor: COLORS.green };
+    case "fillBlue":
+      return { background: COLORS.blue, borderColor: COLORS.blue };
     default:
       return undefined;
   }
@@ -71,18 +81,28 @@ function DashedFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-function GroupTitle({ title }: { title: string }) {
+function GroupTitle({ title, onDark }: { title: string; onDark: boolean }) {
   return (
-    <div className="absolute -top-2 left-3 bg-white px-2 text-[10px] font-semibold uppercase tracking-widest text-black/50">
+    <div
+      className={[
+        "absolute -top-2 left-3 px-2 text-[10px] font-semibold uppercase tracking-widest",
+        onDark ? "bg-[#1F1F46] text-white/60" : "bg-white text-black/50",
+      ].join(" ")}
+    >
       {title}
     </div>
   );
 }
 
-function DashedGroupBox({ group }: { group: DashedGroup }) {
+function DashedGroupBox({ group, onDark }: { group: DashedGroup; onDark: boolean }) {
   return (
-    <div className="relative rounded-2xl border border-dashed border-black/25 p-3">
-      {group.title ? <GroupTitle title={group.title} /> : null}
+    <div
+      className={[
+        "relative rounded-2xl border border-dashed p-3",
+        onDark ? "border-white/40" : "border-black/25",
+      ].join(" ")}
+    >
+      {group.title ? <GroupTitle title={group.title} onDark={onDark} /> : null}
       <div className="flex flex-wrap items-stretch gap-3">
         {group.pills.map((p) => (
           <PillLink key={p.id} pill={p} />
@@ -104,28 +124,45 @@ function PillLink({ pill }: { pill: Pill }) {
   );
 }
 
-function RowContent({ row }: { row: LevelNavModel["rows"][number] }) {
-  if (row.dashedParentPill) {
+function RowContent({ row }: { row: RowModel }) {
+  const onDark = !row.active;
+
+  // Row 1: dashed single pill
+  if (row.dashedSingle) {
+    const inner = (
+      <DashedFrame>
+        <PillLink pill={row.dashedSingle} />
+      </DashedFrame>
+    );
+
     return (
       <div className="py-5">
-        <DashedFrame>
-          <PillLink pill={row.dashedParentPill} />
-        </DashedFrame>
+        {row.active ? (
+          <div className="rounded-2xl bg-white p-4 text-[#1F1F46]">{inner}</div>
+        ) : (
+          inner
+        )}
       </div>
     );
   }
 
-  if (!row.tray) return <div className="h-[88px]" />;
+  if (!row.groups) return <div className="h-[88px]" />;
+
+  const groups = (
+    <div className="flex flex-wrap items-start gap-4">
+      {row.groups.map((g) => (
+        <DashedGroupBox key={g.id} group={g} onDark={onDark} />
+      ))}
+    </div>
+  );
 
   return (
     <div className="py-5">
-      <div className="rounded-2xl bg-white p-4 text-[#1F1F46]">
-        <div className="flex flex-wrap items-start gap-4">
-          {row.tray.groups.map((g) => (
-            <DashedGroupBox key={g.id} group={g} />
-          ))}
-        </div>
-      </div>
+      {row.active ? (
+        <div className="rounded-2xl bg-white p-4 text-[#1F1F46]">{groups}</div>
+      ) : (
+        groups
+      )}
     </div>
   );
 }
