@@ -22,9 +22,9 @@ function titleForLevel(level: string) {
 export default async function LevelPage({
   params,
 }: {
-  params: { level: string };
+  params: Promise<{ level: string }>;
 }) {
-  const { level } = params;
+  const { level } = await params;
   if (!LEVELS.has(level)) notFound();
 
   return (
