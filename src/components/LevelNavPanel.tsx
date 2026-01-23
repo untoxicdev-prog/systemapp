@@ -27,6 +27,21 @@ function pillClasses(style: PillStyle) {
         base,
         "bg-transparent text-white border border-white/40 hover:bg-white/10",
       ].join(" ");
+    case "darkOutlineGreen":
+      return [
+        base,
+        "bg-transparent text-white border-2 hover:bg-white/10",
+      ].join(" ");
+    case "darkOutlineBlue":
+      return [
+        base,
+        "bg-transparent text-white border-2 hover:bg-white/10",
+      ].join(" ");
+    case "darkOutlineOrange":
+      return [
+        base,
+        "bg-transparent text-white border-2 hover:bg-white/10",
+      ].join(" ");
     case "darkSelected":
       return [base, "bg-[#1F1F46] text-white border border-[#1F1F46]"].join(" ");
     case "white":
@@ -51,10 +66,13 @@ function pillClasses(style: PillStyle) {
 function pillStyleInline(style: PillStyle): React.CSSProperties | undefined {
   switch (style) {
     case "outlineGreen":
+    case "darkOutlineGreen":
       return { borderColor: COLORS.green };
     case "outlineBlue":
+    case "darkOutlineBlue":
       return { borderColor: COLORS.blue };
     case "outlineOrange":
+    case "darkOutlineOrange":
       return { borderColor: COLORS.orange };
     case "fillGreen":
       return { background: COLORS.green, borderColor: COLORS.green };
@@ -67,15 +85,20 @@ function pillStyleInline(style: PillStyle): React.CSSProperties | undefined {
 
 function LevelNum({ n }: { n: 1 | 2 | 3 | 4 }) {
   return (
-    <div className="flex h-full items-start justify-center pt-8 text-3xl font-semibold text-white/90">
+    <div className="flex h-full items-start justify-center pt-8 text-3xl font-semibold text-current/80">
       {n}
     </div>
   );
 }
 
-function DashedFrame({ children }: { children: React.ReactNode }) {
+function DashedFrame({ children, onDark }: { children: React.ReactNode; onDark: boolean }) {
   return (
-    <div className="rounded-2xl border border-dashed border-white/40 p-3">
+    <div
+      className={[
+        "rounded-2xl border border-dashed p-3",
+        onDark ? "border-white/35" : "border-black/25",
+      ].join(" ")}
+    >
       {children}
     </div>
   );
@@ -99,7 +122,7 @@ function DashedGroupBox({ group, onDark }: { group: DashedGroup; onDark: boolean
     <div
       className={[
         "relative rounded-2xl border border-dashed p-3",
-        onDark ? "border-white/40" : "border-black/25",
+        onDark ? "border-white/35" : "border-black/25",
       ].join(" ")}
     >
       {group.title ? <GroupTitle title={group.title} onDark={onDark} /> : null}
@@ -129,19 +152,11 @@ function RowContent({ row }: { row: RowModel }) {
 
   // Row 1: dashed single pill
   if (row.dashedSingle) {
-    const inner = (
-      <DashedFrame>
-        <PillLink pill={row.dashedSingle} />
-      </DashedFrame>
-    );
-
     return (
       <div className="py-5">
-        {row.active ? (
-          <div className="rounded-2xl bg-white p-4 text-[#1F1F46]">{inner}</div>
-        ) : (
-          inner
-        )}
+        <DashedFrame onDark={onDark}>
+          <PillLink pill={row.dashedSingle} />
+        </DashedFrame>
       </div>
     );
   }
@@ -158,11 +173,7 @@ function RowContent({ row }: { row: RowModel }) {
 
   return (
     <div className="py-5">
-      {row.active ? (
-        <div className="rounded-2xl bg-white p-4 text-[#1F1F46]">{groups}</div>
-      ) : (
-        groups
-      )}
+      {groups}
     </div>
   );
 }
@@ -171,13 +182,24 @@ export function LevelNavPanel({ model }: { model: LevelNavModel }) {
   return (
     <div className="bg-[#1F1F46]">
       <div className="mx-auto w-full max-w-[1400px] px-6">
-        <div className="grid grid-cols-[56px_1fr] gap-6">
-          {model.rows.map((row) => (
-            <div key={row.level} className="contents">
-              <LevelNum n={row.level} />
-              <RowContent row={row} />
-            </div>
-          ))}
+        <div className="flex flex-col gap-2 py-3">
+          {model.rows.map((row) => {
+            const hasContent = Boolean(row.dashedSingle || row.groups);
+
+            return (
+              <div
+                key={row.level}
+                className={[
+                  "inline-grid grid-cols-[56px_1fr] gap-6",
+                  row.active ? "rounded-2xl bg-white text-[#1F1F46]" : "text-white",
+                  !row.active && hasContent ? "opacity-75 hover:opacity-100" : "",
+                ].join(" ")}
+              >
+                <LevelNum n={row.level} />
+                <RowContent row={row} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

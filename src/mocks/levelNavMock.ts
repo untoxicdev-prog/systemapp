@@ -2,6 +2,9 @@ export type PillStyle =
   | "whiteLink"
   | "white"
   | "darkOutline"
+  | "darkOutlineGreen"
+  | "darkOutlineBlue"
+  | "darkOutlineOrange"
   | "darkSelected"
   | "outlineGreen"
   | "outlineBlue"
@@ -37,18 +40,82 @@ export type LevelNavModel = {
   rows: RowModel[];
 };
 
-type Direction = { slug: string; label: string; group: "projectBureau" | "production" | "system" };
+export type DirectionGroup = "projectBureau" | "production" | "system";
+export type Direction = {
+  slug: string;
+  navLabel: string;
+  title: string;
+  subtitle?: string;
+  group: DirectionGroup;
+  groupTitle?: string;
+};
 type L3Obj = { slug: string; label: string; type: "green" | "blue" | "orange"; directionSlug: string };
-type L4Item = { slug: string; label: string; l3Slug: string; directionSlug: string };
+type L4Item = {
+  slug: string;
+  label: string;
+  l3Slug: string;
+  directionSlug: string;
+  groupId: string;
+  groupTitle: string;
+};
 
 const DIRECTIONS: Direction[] = [
-  { slug: "system-create", label: "система создания\nнаправлений\nдеятельности", group: "system" },
-  { slug: "predmety", label: "направление\nПредметы", group: "projectBureau" },
-  { slug: "arhitektura", label: "направление\nАрхитектура", group: "projectBureau" },
-  { slug: "gorod", label: "направление\nГород", group: "projectBureau" },
-  { slug: "predmety-prod", label: "направления\nПредметы", group: "production" },
-  { slug: "sooruzheniya", label: "направления\nСооружения", group: "production" },
+  {
+    slug: "system-create",
+    navLabel: "система создания\nнаправлений\nдеятельности",
+    title: "система создания направлений деятельности",
+    group: "system",
+    groupTitle: "система создания",
+  },
+  {
+    slug: "predmety",
+    navLabel: "направление\nПредметы",
+    title: "направление Предметы",
+    subtitle: "ОКБ",
+    group: "projectBureau",
+    groupTitle: "проектное бюро",
+  },
+  {
+    slug: "sooruzheniya",
+    navLabel: "направление\nСооружения",
+    title: "направление Сооружения",
+    subtitle: "архитектурное бюро",
+    group: "projectBureau",
+    groupTitle: "проектное бюро",
+  },
+  {
+    slug: "gorod",
+    navLabel: "направление\nГород",
+    title: "направление Город",
+    subtitle: "градостроительное бюро",
+    group: "projectBureau",
+    groupTitle: "проектное бюро",
+  },
+  {
+    slug: "zavod",
+    navLabel: "направление\nЗавод",
+    title: "направление Завод",
+    subtitle: "завод предметов быта",
+    group: "production",
+    groupTitle: "производство",
+  },
+  {
+    slug: "zhilyo",
+    navLabel: "направление\nЖильё",
+    title: "направление Жильё",
+    subtitle: "завод сооружений",
+    group: "production",
+    groupTitle: "производство",
+  },
 ];
+
+export function getDirection(slug: string) {
+  return DIRECTIONS.find((d) => d.slug === slug);
+}
+
+export function listDirections() {
+  return [...DIRECTIONS];
+}
 
 const L3_OBJECTS: L3Obj[] = [
   { slug: "investory", label: "инвесторы", type: "green", directionSlug: "predmety" },
@@ -64,10 +131,102 @@ const L3_OBJECTS: L3Obj[] = [
 
 const L4_ITEMS: L4Item[] = [
   {
+    slug: "edinaia-sistema-dizayn-proektov",
+    label: "единая система\nдизайн-проектов",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "embodiments",
+    groupTitle: "воплощения",
+  },
+  {
+    slug: "lineika-predmetov",
+    label: "линейка\nпредметов",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "embodiments",
+    groupTitle: "воплощения",
+  },
+  {
     slug: "dizayn-proekty-predmetov-byta",
     label: "дизайн-проекты\nпредметов быта",
     l3Slug: "proekty-predmetov",
     directionSlug: "predmety",
+    groupId: "embodiments",
+    groupTitle: "воплощения",
+  },
+  {
+    slug: "analiz-predmetov",
+    label: "анализ\nпредметов",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "descriptions",
+    groupTitle: "описания",
+  },
+  {
+    slug: "desc-q",
+    label: "?",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "descriptions",
+    groupTitle: "описания",
+  },
+  {
+    slug: "sostoyaniya-tselevoj-sistemy",
+    label: "состояния\nцелевой системы",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "methods",
+    groupTitle: "методы",
+  },
+  {
+    slug: "sluzhenie-obrazcom",
+    label: "служение образцом\nпромышленного производства",
+    l3Slug: "proekty-predmetov",
+    directionSlug: "predmety",
+    groupId: "works",
+    groupTitle: "работы",
+  },
+
+  // Level-04 (green) example from keyframes: "грант" inside "Инвесторы"
+  {
+    slug: "chastnyy-investor",
+    label: "частный инвестор",
+    l3Slug: "investory",
+    directionSlug: "predmety",
+    groupId: "roles",
+    groupTitle: "роли",
+  },
+  {
+    slug: "bank",
+    label: "банк",
+    l3Slug: "investory",
+    directionSlug: "predmety",
+    groupId: "roles",
+    groupTitle: "роли",
+  },
+  {
+    slug: "gosfond",
+    label: "государственный\nфонд",
+    l3Slug: "investory",
+    directionSlug: "predmety",
+    groupId: "roles",
+    groupTitle: "роли",
+  },
+  {
+    slug: "kredit",
+    label: "кредит",
+    l3Slug: "investory",
+    directionSlug: "predmety",
+    groupId: "opportunities",
+    groupTitle: "возможности",
+  },
+  {
+    slug: "grant",
+    label: "грант",
+    l3Slug: "investory",
+    directionSlug: "predmety",
+    groupId: "opportunities",
+    groupTitle: "возможности",
   },
 ];
 
@@ -76,16 +235,20 @@ function clampLevel(level: number): 1 | 2 | 3 | 4 {
   return 1;
 }
 
-function findDirection(slug?: string) {
-  return slug ? DIRECTIONS.find((d) => d.slug === slug) : undefined;
-}
-
 function findL3(slug?: string) {
   return slug ? L3_OBJECTS.find((o) => o.slug === slug) : undefined;
 }
 
 function findL4(slug?: string) {
   return slug ? L4_ITEMS.find((i) => i.slug === slug) : undefined;
+}
+
+export function getL3Object(slug: string) {
+  return findL3(slug);
+}
+
+export function getL4Item(slug: string) {
+  return findL4(slug);
 }
 
 export function getDefaultL2Slug() {
@@ -134,23 +297,23 @@ export function getLevelNavModel(args: {
   // Row 2: all siblings (directions), grouped
   const systemPills = DIRECTIONS.filter((d) => d.group === "system").map((d) => ({
     id: d.slug,
-    label: d.label,
+    label: d.navLabel,
     href: `/level/2/${d.slug}`,
-    style: row2Active ? (d.slug === directionSlug ? "darkSelected" : "white") : d.slug === directionSlug ? "whiteLink" : "darkOutline",
+    style: d.slug === directionSlug ? "fillBlue" : row2Active ? "white" : "darkOutline",
   })) satisfies Pill[];
 
   const pbPills = DIRECTIONS.filter((d) => d.group === "projectBureau").map((d) => ({
     id: d.slug,
-    label: d.label,
+    label: d.navLabel,
     href: `/level/2/${d.slug}`,
-    style: row2Active ? (d.slug === directionSlug ? "darkSelected" : "white") : d.slug === directionSlug ? "whiteLink" : "darkOutline",
+    style: d.slug === directionSlug ? "fillBlue" : row2Active ? "white" : "darkOutline",
   })) satisfies Pill[];
 
   const prodPills = DIRECTIONS.filter((d) => d.group === "production").map((d) => ({
     id: d.slug,
-    label: d.label,
+    label: d.navLabel,
     href: `/level/2/${d.slug}`,
-    style: row2Active ? (d.slug === directionSlug ? "darkSelected" : "white") : d.slug === directionSlug ? "whiteLink" : "darkOutline",
+    style: d.slug === directionSlug ? "fillBlue" : row2Active ? "white" : "darkOutline",
   })) satisfies Pill[];
 
   const row2: RowModel = {
@@ -159,7 +322,7 @@ export function getLevelNavModel(args: {
     groups:
       currentLevel >= 2
         ? [
-            { id: "system", pills: systemPills },
+            { id: "system", title: "система создания", pills: systemPills },
             { id: "projectBureau", title: "проектные бюро", pills: pbPills },
             { id: "production", title: "производства", pills: prodPills },
           ]
@@ -183,8 +346,8 @@ export function getLevelNavModel(args: {
                   ? "fillGreen"
                   : "outlineGreen"
                 : o.slug === selectedL3Slug
-                  ? "whiteLink"
-                  : "darkOutline",
+                  ? "fillGreen"
+                  : "darkOutlineGreen",
             })),
           },
           {
@@ -199,8 +362,8 @@ export function getLevelNavModel(args: {
                   ? "fillBlue"
                   : "outlineBlue"
                 : o.slug === selectedL3Slug
-                  ? "whiteLink"
-                  : "darkOutline",
+                  ? "fillBlue"
+                  : "darkOutlineBlue",
             })),
           },
           {
@@ -215,8 +378,8 @@ export function getLevelNavModel(args: {
                   ? "fillOrange"
                   : "outlineOrange"
                 : o.slug === selectedL3Slug
-                  ? "whiteLink"
-                  : "darkOutline",
+                  ? "fillOrange"
+                  : "darkOutlineOrange",
             })),
           },
         ]
@@ -230,86 +393,53 @@ export function getLevelNavModel(args: {
 
   // Row 4: all siblings for selected level-4 item (mock)
   const selectedL4Slug = args.l4Slug ?? getDefaultL4Slug();
+  const selectedL4 = findL4(selectedL4Slug);
+  const row4L3 = selectedL4 ? findL3(selectedL4.l3Slug) : l3;
+  const row4Type = row4L3?.type ?? "orange";
+
+  function row4PillStyle(isSelected: boolean): PillStyle {
+    if (isSelected) {
+      if (row4Type === "green") return "fillGreen";
+      if (row4Type === "blue") return "fillBlue";
+      return "fillOrange";
+    }
+
+    if (row4Type === "green") return "outlineGreen";
+    if (row4Type === "blue") return "outlineBlue";
+    return "outlineOrange";
+  }
+
+  const row4Groups: DashedGroup[] | undefined =
+    currentLevel >= 4
+      ? (() => {
+          const l3Slug = row4L3?.slug ?? getDefaultL3Slug();
+          const items = L4_ITEMS.filter((i) => i.directionSlug === directionSlug && i.l3Slug === l3Slug);
+
+          const groups = new Map<string, DashedGroup>();
+          for (const i of items) {
+            const existing = groups.get(i.groupId);
+            const pill: Pill = {
+              id: i.slug,
+              label: i.label,
+              href: `/level/4/${i.slug}`,
+              style: row4PillStyle(i.slug === selectedL4Slug),
+            };
+
+            if (existing) {
+              existing.pills.push(pill);
+            } else {
+              groups.set(i.groupId, { id: i.groupId, title: i.groupTitle, pills: [pill] });
+            }
+          }
+
+          return [...groups.values()];
+        })()
+      : undefined;
+
   const row4: RowModel = {
     level: 4,
     active: row4Active,
-    groups:
-      currentLevel >= 4
-        ? [
-            {
-              id: "embodiments",
-              title: "воплощения",
-              pills: [
-                {
-                  id: "emb-sys",
-                  label: "единая система\nдизайн-проектов",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-                {
-                  id: "emb-line",
-                  label: "линейка\nпредметов",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-                {
-                  id: "emb-home",
-                  label: "дизайн-проекты\nпредметов быта",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "fillOrange",
-                },
-              ],
-            },
-            {
-              id: "descriptions",
-              title: "описания",
-              pills: [
-                {
-                  id: "desc-q",
-                  label: "?",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-              ],
-            },
-            {
-              id: "methods",
-              title: "методы",
-              pills: [
-                {
-                  id: "m-states",
-                  label: "состояния\nцелевой системы",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-              ],
-            },
-            {
-              id: "target",
-              title: "целевая система",
-              pills: [
-                {
-                  id: "t-sys",
-                  label: "единая система\nдизайн-проектов",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-                {
-                  id: "t-line",
-                  label: "линейка\nпредметов",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "outlineOrange",
-                },
-                {
-                  id: "t-home",
-                  label: "дизайн-проекты\nпредметов быта",
-                  href: `/level/4/${selectedL4Slug}`,
-                  style: "fillOrange",
-                },
-              ],
-            },
-          ]
-        : undefined,
+    groups: row4Groups,
   };
 
   // Hide below-current levels (always render row numbers, but no content).
